@@ -13,6 +13,7 @@ async function main() {
   await chatGPTBot.startGPTBot()
   const app = express();
   app
+    .get('/ping', (req, res) => res.send('pong'))
     .post('/message', async (req: MessageRequest, res) => {
       const { userId } = req.query;
       const content = req.body;
