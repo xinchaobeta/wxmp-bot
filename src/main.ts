@@ -1,43 +1,36 @@
 import { ChatGPTBot } from "./bot.js";
-import { WechatApp } from "./wechatapp.js";
-import { renderOutTextMsg } from "./wechatDefaultController.js";
+import express, { Response, Request } from 'express'
+
+interface MessageRequest extends Request {
+  query: {
+    userId: string;
+  },
+}
+const PORT = process.env.PORT;
 
 const chatGPTBot = new ChatGPTBot();
 async function main() {
-  await chatGPTBot.startGPTBot();
-  const app = new WechatApp({
-    appId: process.env.WECHAT_APP_ID!,
-    appSecret: process.env.WECHAT_APP_SECRET!,
-    token: process.env.WECHAT_TOKEN!,
-    encodingAESKey: process.env.WECHAT_ENCODING_AES_KEY!,
-  });
-
+  await chatGPTBot.startGPTBot()
+  const app = express();
   app
-    .on('inTextMsg', async (message) => {
-      const { getFromUserName: userId, getContent: content } =  message;
-      if (!chatGPTBot.ready) {
-        return renderOutTextMsg(message, 'gpt not ready');
-      }
-      if (content.startsWith("/ping")) {
-        return renderOutTextMsg(message, 'pong')
-      }
+    .post('/message', async (req: MessageRequest, res) => {
+      const { userId } = req.query;
+      const content = req.body;
+      console.log(`userId: ${userId}`);
+      console.log(`Message: ${content}`);
       try {
-        console.log(`Message: ${content}`);
         const gptAnswer = await chatGPTBot.handleMesaage(content, userId);
-        // todo: 分段文字回复
-        return renderOutTextMsg(message, gptAnswer?.join(''));
+        res.send(gptAnswer);
       } catch (e) {
+        console.log('--------- server error start ----------')
         console.error(e);
-        return renderOutTextMsg(message, (e as Error)?.message ?? 'server error');
-      }
+        console.log('--------- server error end ----------')
+      } 
     })
-
-  try {
-    await app.start();
-  } catch (e) {
-    console.error(
-      `⚠️ app start failed, error = ${e}`
-    );
-  }
+  ;
+  app.listen(PORT, () => {
+    console.log(`服务器已启动 0.0.0.0:${PORT}`);
+  });
 }
+
 main();
