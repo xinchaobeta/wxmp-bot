@@ -12,6 +12,7 @@ const chatGPTBot = new ChatGPTBot();
 async function main() {
   await chatGPTBot.startGPTBot()
   const app = express();
+  app.use(express.json())
   app
     .get('/ping', (req, res) => res.send('pong'))
     .post('/message', async (req: MessageRequest, res) => {
