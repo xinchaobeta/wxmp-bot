@@ -16,13 +16,13 @@ async function main() {
     .get('/ping', (req, res) => res.send('pong'))
     .post('/message', async (req: MessageRequest, res) => {
       const { userId } = req.query;
-      const content = req.body;
+      const { content } = req.body;
       console.log(`userId: ${userId}`);
       console.log(`Message: ${content}`);
       try {
         const gptAnswer = await chatGPTBot.handleMesaage(content, userId);
         console.log('gptAnswer: ', gptAnswer);
-        res.send(gptAnswer);
+        res.json({ content: gptAnswer });
       } catch (e) {
         console.log('--------- server error start ----------')
         console.error(e);
