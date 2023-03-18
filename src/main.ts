@@ -21,6 +21,7 @@ async function main() {
       console.log(`Message: ${content}`);
       try {
         const gptAnswer = await chatGPTBot.handleMesaage(content, userId);
+        console.log('gptAnswer: ', gptAnswer);
         res.send(gptAnswer);
       } catch (e) {
         console.log('--------- server error start ----------')

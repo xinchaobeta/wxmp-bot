@@ -22,7 +22,6 @@ enum MessageType {
   Post = 16, // Moment, Channel, Tweet, etc
 }
 
-const SINGLE_MESSAGE_MAX_SIZE = 500;
 export class ChatGPTBot {
   // Record talkid with conversation id
   chatGPTPool = new ChatGPTPool();
@@ -60,17 +59,6 @@ export class ChatGPTBot {
   async getGPTMessage(text: string, talkerId: string): Promise<string> {
     return await this.chatGPTPool.sendMessage(text, talkerId);
   }
-  // The message is segmented according to its size
-  segmentMessage(mesasge: string): string[] {
-    const messages: Array<string> = [];
-    let message = mesasge;
-    while (message.length > SINGLE_MESSAGE_MAX_SIZE) {
-      messages.push(message.slice(0, SINGLE_MESSAGE_MAX_SIZE));
-      message = message.slice(SINGLE_MESSAGE_MAX_SIZE);
-    }
-    messages.push(message);
-    return messages;
-  }
   // Check whether the ChatGPT processing can be triggered
   tiggerGPTMessage(text: string): boolean {
     const chatPrivateTiggerKeyword = this.chatPrivateTiggerKeyword;
@@ -87,6 +75,6 @@ export class ChatGPTBot {
     if (!this.tiggerGPTMessage(rawText)) return;
     const text = this.cleanMessage(rawText);
     const gptMessage = await this.getGPTMessage(text, talkerId);
-    return this.segmentMessage(gptMessage);
+    return gptMessage;
   }
 }
