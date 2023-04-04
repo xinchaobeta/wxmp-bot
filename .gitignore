@@ -277,6 +277,10 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+.env.development.local
+.env.test.local
+.env.production.local
+.env.local
 
 # Spyder project settings
 .spyderproject
@@ -320,3 +324,4 @@ config.json
 cache.json
 config.yaml
 .vscode
+
