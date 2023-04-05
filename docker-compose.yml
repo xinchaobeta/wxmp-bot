@@ -1,0 +1,19 @@
+version: "3"
+services:
+  wxmp_bot:
+    image: xinchaobeta/wxmp-bot
+    container_name: wxmp_bot
+    ports:
+      - 80:80
+    env_file: .env.local
+    command: pnpm start
+
+  watchtower:
+    image: containrrr/watchtower
+    container_name: watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - WATCHTOWER_CLEANUP=true
+      - WATCHTOWER_POLL_INTERVAL=60
+    command: wxmp_bot
