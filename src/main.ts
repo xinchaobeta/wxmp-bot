@@ -6,7 +6,7 @@ interface MessageRequest extends Request {
     userId: string;
   },
 }
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 80;
 
 const chatGPTBot = new ChatGPTBot();
 async function main() {
